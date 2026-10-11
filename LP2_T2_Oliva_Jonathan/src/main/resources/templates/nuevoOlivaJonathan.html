@@ -1,0 +1,62 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://thymeleaf.org">
+<head>
+	<title>Nueva Orden - Oliva Jonathan</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<style>
+		body { font-family: 'Segoe UI', sans-serif; background-color: #f8f9fa; padding: 40px; }
+		.card { max-width: 600px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
+		h1 { text-align: center; color: #212529; font-weight: bold; margin-bottom: 25px; font-size: 1.8rem; }
+		.form-group { margin-bottom: 18px; }
+		label { display: block; margin-bottom: 6px; font-weight: 600; color: #495057; font-size: 0.9rem; }
+		.form-control, .form-select { width: 100%; padding: 10px; border: 1px solid #ced4da; border-radius: 4px; box-sizing: border-box; font-size: 0.95rem; }
+		.form-control:focus, .form-select:focus { border-color: #86b7fe; outline: none; box-shadow: 0 0 0 0.25rem rgba(13,110,253,0.25); }
+		.btn-group { display: flex; justify-content: space-between; margin-top: 25px; }
+		.btn { padding: 10px 20px; border-radius: 4px; font-weight: bold; cursor: pointer; border: none; font-size: 0.95rem; text-decoration: none; }
+		.btn-primary { background: #0d6efd; color: white; }
+		.btn-primary:hover { background: #0b5ed7; }
+		.btn-outline-dark { background: transparent; border: 1px solid #212529; color: #212529; }
+		.btn-outline-dark:hover { background: #212529; color: white; }
+		.btn-secondary { background: #6c757d; color: white; }
+	</style>
+</head>
+<body>
+	<div class="card">
+		<h1>Orden de compra nueva</h1>
+		<form th:action="@{/ordenes/registrar}" method="post" th:object="${ordenCompra}">
+			
+			<div class="form-group">
+				<label for="proveedor">Proveedor</label>
+				<select class="form-select" id="proveedor" th:field="*{proveedor.idProveedor}" required>
+					<option value="">--Seleccione--</option>
+					<option th:each="p : ${proveedores}" th:value="${p.idProveedor}" th:text="${p.ruc} + ' - ' + ${p.razonSocial}"></option>
+				</select>
+			</div>
+			
+			<div class="form-group">
+				<label for="monto">Monto (S/.)</label>
+				<input type="number" class="form-control" step="0.01" placeholder="0.00" id="monto" th:field="*{monto}" required>
+			</div>
+			
+			<div class="form-group">
+				<label for="direccionEntrega">Dirección de entrega</label>
+				<input type="text" class="form-control" placeholder="Ingrese una dirección de entrega" id="direccionEntrega" th:field="*{direccionEntrega}" required>
+			</div>
+			
+			<div class="form-group">
+				<label for="fechaEntrega">Fecha de entrega</label>
+				<input type="date" class="form-control" id="fechaEntrega" th:field="*{fechaEntrega}" required>
+			</div>
+
+			<div class="btn-group">
+				<a th:href="@{/ordenes/listar}" class="btn btn-outline-dark">↩ Regresar</a>
+				<div>
+					<button type="reset" class="btn btn-secondary">🧹 Limpiar</button>
+					<button type="submit" class="btn btn-primary">💾 Registrar</button>
+				</div>
+			</div>
+		</form>
+	</div>
+</body>
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://thymeleaf.org">
+<head>
+    <title>Examen T2 - Jonathan Oliva Cuyubamba</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Hacemos un bypass de los archivos externos inyectando Bootstrap Directo -->
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8f9fa; color: #333; padding: 30px; }
+        .container { max-width: 1300px; margin: 0 auto; background: #fff; padding: 25px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .row-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+        h1 { font-size: 2.2rem; font-weight: 700; color: #212529; margin: 0; }
+        .btn-success { background-color: #198754; color: white; text-decoration: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; font-size: 1rem; display: inline-flex; align-items: center; border: none; }
+        .btn-success:hover { background-color: #157347; }
+        .table-responsive { overflow-x: auto; margin-top: 15px; border-radius: 6px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        table { width: 100%; border-collapse: collapse; background-color: #fff; text-align: center; font-size: 0.95rem; }
+        thead { background-color: #212529; color: #fff; }
+        th { padding: 14px; font-weight: 600; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.5px; }
+        td { padding: 12px 10px; border-bottom: 1px solid #dee2e6; color: #495057; }
+        tbody tr:nth-of-type(even) { background-color: #f8f9fa; }
+        tbody tr:hover { background-color: #f1f3f5; }
+        .badge-p { background: #ffc107; color: #000; padding: 5px 10px; border-radius: 4px; font-weight: 600; font-size: 0.8rem; }
+        .badge-c { background: #198754; color: #fff; padding: 5px 10px; border-radius: 4px; font-weight: 600; font-size: 0.8rem; }
+        .badge-a { background: #dc3545; color: #fff; padding: 5px 10px; border-radius: 4px; font-weight: 600; font-size: 0.8rem; }
+        .btn-edit { background: #e9ecef; border: 1px solid #ced4da; padding: 6px 12px; border-radius: 4px; color: #495057; text-decoration: none; font-size: 0.9rem; }
+        .btn-edit:hover { background: #dee2e6; }
+        .alert-success { background-color: #d1e7dd; border-color: #badbcc; color: #0f5132; padding: 15px; margin-bottom: 20px; border-radius: 6px; font-weight: 500; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Alerta de éxito Flash -->
+        <div th:if="${success}" class="alert alert-success" role="alert">
+            <span th:text="${success}"></span>
+        </div>
+
+        <div class="row-header">
+            <h1>Listado de órdenes de compra</h1>
+            <!-- Botón nuevo direccionado al controlador -->
+            <a th:href="@{/ordenes/nuevo}" class="btn btn-success">+ Nuevo</a>
+        </div>
+        
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Número</th>
+                        <th>Fecha de entrega</th>
+                        <th>Dirección de entrega</th>
+                        <th>Proveedor</th>
+                        <th>Rubro</th>
+                        <th>Página web</th>
+                        <th>Monto</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Iteración dinámica en orden descendente -->
+                    <tr th:each="o : ${ordenes}">
+                        <td style="font-weight: bold;" th:text="${o.nroOrden}"></td>
+                        <td th:text="${o.fechaEntrega}"></td>
+                        <td style="text-align: left;" th:text="${o.direccionEntrega}"></td>
+                        <!-- Concatenación de RUC y Razón Social requerida -->
+                        <td style="text-align: left;" th:text="${o.proveedor.ruc} + ' - ' + ${o.proveedor.razonSocial}"></td>
+                        <td th:text="${o.proveedor.rubro.denominacion}"></td>
+                        <td>
+                            <a th:if="${o.proveedor.paginaWeb}" th:text="${o.proveedor.paginaWeb}" th:href="'http://' + ${o.proveedor.paginaWeb}" target="_blank" style="color: #0d6efd; text-decoration: none;"></a>
+                            <span th:unless="${o.proveedor.paginaWeb}">-</span>
+                        </td>
+                        <!-- Filtro de moneda formal peruano -->
+						<td style="font-weight: bold; color: #198754;" th:text="'S/. ' + ${#numbers.formatDecimal(o.monto, 1, 'COMMA', 2, 'POINT')}"></td>
+                        <td>
+                            <!-- Renderizado formal de los estados dinámicos del Word -->
+                            <span th:if="${o.estado == 'P'}" class="badge-p">Pendiente</span>
+                            <span th:if="${o.estado == 'C'}" class="badge-c">Completado</span>
+                            <span th:if="${o.estado == 'A'}" class="badge-a">Anulado</span>
+                        </td>
+                        <td>
+                            <!-- Enlace de edición pasando la llave primaria del registro -->
+                            <a th:href="@{/ordenes/editar/{id}(id=${o.nroOrden})}" class="btn-edit">📝 Editar</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
